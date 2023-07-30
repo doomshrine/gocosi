@@ -1,0 +1,76 @@
+¯\_(ツ)_/¯:
+    name: ¯\_(ツ)_/¯
+    color: '#f9d0c4'
+    description: ¯\\\_(ツ)_/¯
+api:
+    name: api
+    color: '#6f42c1'
+    description: Issues related to the GitHub API
+bug:
+    name: bug
+    color: '#d73a4a'
+    description: Something isn't working as expected
+enhancement:
+    name: enhancement
+    color: '#0dd8ac'
+    description: New feature or improvement request
+documentation:
+    name: documentation
+    color: '#007bc7'
+    description: Issues related to documentation
+help-wanted:
+    name: help-wanted
+    color: '#7057ff'
+    description: Contribution opportunities available
+question:
+    name: question
+    color: '#ffb000'
+    description: Questions or need for further clarification
+invalid:
+    name: invalid
+    color: '#e4e669'
+    description: Issue is no longer valid or applicable
+duplicate:
+    name: duplicate
+    color: '#cfd3d7'
+    description: Issue already reported or duplicated
+wontfix:
+    name: wontfix
+    color: '#a2eeef'
+    description: Issue won't be fixed or addressed
+feature-request:
+    name: feature-request
+    color: '#61dafb'
+    description: Request for a new feature or enhancement
+critical:
+    name: critical
+    color: '#e00808'
+    description: Critical issue that requires immediate attention
+high-priority:
+    name: high-priority
+    color: '#ff7b72'
+    description: Issue with high priority
+low-priority:
+    name: low-priority
+    color: '#8c8c8c'
+    description: Issue with low priority
+in-progress:
+    name: in-progress
+    color: '#2a8b9d'
+    description: Issue currently being worked on
+resolved:
+    name: resolved
+    color: '#28a745'
+    description: Issue has been resolved
+feedback:
+    name: feedback
+    color: '#d4c5f9'
+    description: Feedback or suggestions for improvement
+testing:
+    name: testing
+    color: '#36bcef'
+    description: Issues related to testing or test cases
+hacktoberfest:
+    name: hacktoberfest
+    color: '#ff6b00'
+    description: Issues related to the Hacktoberfest event

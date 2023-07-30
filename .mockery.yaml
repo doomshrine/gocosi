@@ -1,0 +1,10 @@
+with-expecter: true
+packages:
+  github.com/doomshrine/gocosi:
+    config:
+      filename: "{{.InterfaceName}}_mock.go"
+      dir: "mock"
+      outpkg: "mock"
+    interfaces:
+      COSIProvisionerServer:
+      COSIIdentityServer:

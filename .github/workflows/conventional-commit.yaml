@@ -1,0 +1,23 @@
+# This workflow validate commit messages.
+# It is supposed to be run only when:
+#   - the push is done to the main;
+#   OR
+#   - pull request is open to the main;
+
+name: Lint commit messages
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  commitlint:
+    name: Lint commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v5

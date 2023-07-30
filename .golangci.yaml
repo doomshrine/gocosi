@@ -1,0 +1,34 @@
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+output:
+  sort-results: true
+
+issues:
+  fix: true
+
+linters:
+  disable-all: true
+  fast: false
+
+  enable:
+    - errcheck
+    - ineffassign
+    - gosimple
+    - staticcheck
+    - paralleltest
+    - godot
+    - gocyclo
+    - dogsled
+    - gci
+    - gocheckcompilerdirectives
+    - goconst
+    - gocognit
+    - gofumpt
+    - gosec
+    - govet
+    - revive
+    - misspell
+    - wsl
+    - goimports
