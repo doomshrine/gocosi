@@ -4,16 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
+	"os/signal"
+	"syscall"
 
+	"github.com/doomshrine/must"
 	"github.com/go-logr/logr"
 	"google.golang.org/grpc"
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
 )
 
-// logger is a global instance of logr.Logger used in the gocosi.
-var logger logr.Logger
+// log is a global instance of logr.Logger used in the gocosi.
+var log logr.Logger
 
-// Driver.
+// Driver TODO: write description.
 type Driver struct {
 	identity    cosi.IdentityServer
 	provisioner cosi.ProvisionerServer
@@ -28,14 +32,15 @@ type Driver struct {
 // Option.
 type Option func(*Driver) error
 
-// New.
+// New TODO: write description.
 func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, opts ...Option) (*Driver, error) {
 	p := &Driver{
 		identity:    identity,
 		provisioner: provisioner,
 
 		endpoint: &Endpoint{
-			permissions: 0o755,
+			permissions: 0o660,
+			address:     must.Do(url.Parse(cosiSocket)),
 		},
 	}
 
@@ -50,32 +55,41 @@ func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, opts 
 	return p, combinedErrors
 }
 
-func SetLogger(log logr.Logger) {
-	logger = log
+// SetLogger is used to to set the default global logger for the gocosi library.
+func SetLogger(l logr.Logger) {
+	log = l
 }
 
-// Run.
+// Run TODO: write description.
 func (d *Driver) Run(ctx context.Context) error {
-	// TODO: trap signals
-	// TODO: configure listener
-	// TODO: configure grpc server
-	// TODO: start grpcServer
+	ctx, cancel := signal.NotifyContext(ctx,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	defer cancel()
+
 	lis, err := d.endpoint.Listener(ctx)
 	if err != nil {
 		return fmt.Errorf("listener creation failed: %w", err)
 	}
+	defer d.endpoint.Close()
 
 	srv, err := d.grpcServer()
 	if err != nil {
 		return fmt.Errorf("gRPC server creation failed: %w", err)
 	}
 
+	go func() {
+		<-ctx.Done()
+		srv.GracefulStop()
+	}()
+
 	err = srv.Serve(lis)
 	if err != nil {
 		return fmt.Errorf("gRPC server failed: %w", err)
 	}
 
-	panic("unimplemented")
+	return nil
 }
 
 func (d *Driver) grpcServer() (*grpc.Server, error) {

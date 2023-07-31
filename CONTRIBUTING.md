@@ -41,28 +41,22 @@ lets us merge or address your contributions quickly.
 
 * Make sure you test against the latest released version. It is possible
   we already fixed the bug you're experiencing.
-
 * If you experienced a panic, please create a [gist](https://gist.github.com)
   of the *entire* generated crash log for us to look at. Double check
   no sensitive items were in the log.
-
 * Respond as promptly as possible to any questions made by the _gocosi_
   team to your issue. Stale issues will be closed.
 
 ### Issue Lifecycle
 
 1. The issue is reported.
-
 2. The issue is verified and categorized by a _gocosi_ collaborator.
    Categorization is done via labels. For example, bugs are marked as "bugs".
-
 3. Unless it is critical, the issue is left for a period of time (sometimes
    many weeks), giving outside contributors a chance to address the issue.
-
 4. The issue is addressed in a pull request. The issue will be
    referenced in commit message(s) so that the code that fixes it is clearly
    linked.
-
 5. The issue is closed. Sometimes, valid issues will be closed to keep
    the issue tracker clean. The issue is still indexed and available for
    future viewers, or can be re-opened if necessary.

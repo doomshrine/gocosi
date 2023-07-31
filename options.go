@@ -11,20 +11,13 @@ import (
 )
 
 // WithCOSIEndpoint overrides the default COSI endpoint.
-//
-// NOTE: Env variable will always be a priority, so treat this only as a way of providing different default option.
-func WithCOSIEndpoint(address string) Option {
+func WithCOSIEndpoint(url *url.URL) Option {
 	return func(d *Driver) error {
-		addr, err := url.Parse(address)
-		if err != nil {
-			return err
-		}
-
-		if addr.Scheme != SchemeUNIX && addr.Scheme != SchemeTCP {
+		if url.Scheme != SchemeUNIX && url.Scheme != SchemeTCP {
 			return errors.New("scheme should be either unix or tcp")
 		}
 
-		d.endpoint.address = addr
+		d.endpoint.address = url
 
 		return nil
 	}
