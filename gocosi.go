@@ -1,9 +1,11 @@
-// Copyright © 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+// Copyright © 2023 doomshrine and gocosi authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,10 +28,10 @@ import (
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
 )
 
-// log is a global instance of logr.Logger used in the gocosi.
+// log is a global instance of logr.Logger used in the gocosi package.
 var log logr.Logger
 
-// Driver TODO: write description.
+// Driver represents a COSI driver implementation.
 type Driver struct {
 	identity    cosi.IdentityServer
 	provisioner cosi.ProvisionerServer
@@ -41,10 +43,10 @@ type Driver struct {
 	otelCollector string
 }
 
-// Option.
+// Option represents a functional option to configure the Driver.
 type Option func(*Driver) error
 
-// New TODO: write description.
+// New creates a new instance of the COSI driver.
 func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, opts ...Option) (*Driver, error) {
 	p := &Driver{
 		identity:    identity,
@@ -67,17 +69,14 @@ func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, opts 
 	return p, combinedErrors
 }
 
-// SetLogger is used to to set the default global logger for the gocosi library.
+// SetLogger is used to set the default global logger for the gocosi library.
 func SetLogger(l logr.Logger) {
 	log = l
 }
 
-// Run TODO: write description.
+// Run starts the COSI driver and serves requests.
 func (d *Driver) Run(ctx context.Context) error {
-	ctx, cancel := signal.NotifyContext(ctx,
-		syscall.SIGINT,
-		syscall.SIGTERM,
-	)
+	ctx, cancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
 	lis, err := d.endpoint.Listener(ctx)
@@ -95,6 +94,8 @@ func (d *Driver) Run(ctx context.Context) error {
 		<-ctx.Done()
 		srv.GracefulStop()
 	}()
+
+	log.V(4).Info("starting driver", "address", lis.Addr())
 
 	err = srv.Serve(lis)
 	if err != nil {

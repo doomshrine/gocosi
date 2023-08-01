@@ -1,9 +1,11 @@
-// Copyright © 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+// Copyright © 2023 doomshrine and gocosi authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,19 +28,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
-)
-
-var (
-	grpclogger = &grpclog.Logger{LoggerImpl: log}
-
-	DefaultOptions = []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(
-			otelgrpc.UnaryServerInterceptor(),
-			logging.UnaryServerInterceptor(grpclogger),
-			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpchandlers.PanicRecovery(grpclogger,
-				func(ctx context.Context) { PanicsTotal.Add(ctx, 1) }))),
-		),
-	}
 )
 
 // WithCOSIEndpoint overrides the default COSI endpoint.
@@ -103,7 +92,16 @@ func WithSocketGroup(group *user.Group) Option {
 //   - recovery.UnaryServerInterceptor() - records metric for panics, and recovers (a log is created for each panic);
 func WithDefaultGRPCOptions() Option {
 	return func(d *Driver) error {
-		d.grpcOptions = DefaultOptions
+		grpclogger := &grpclog.Logger{LoggerImpl: log}
+
+		d.grpcOptions = []grpc.ServerOption{
+			grpc.ChainUnaryInterceptor(
+				otelgrpc.UnaryServerInterceptor(),
+				logging.UnaryServerInterceptor(grpclogger),
+				recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpchandlers.PanicRecovery(grpclogger,
+					func(ctx context.Context) { PanicsTotal.Add(ctx, 1) }))),
+			),
+		}
 
 		return nil
 	}
