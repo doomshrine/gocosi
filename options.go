@@ -1,3 +1,15 @@
+// Copyright © 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//      http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package gocosi
 
 import (
@@ -8,12 +20,25 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/doomshrine/gocosi/grpc/handlers"
+	grpchandlers "github.com/doomshrine/gocosi/grpc/handlers"
 	grpclog "github.com/doomshrine/gocosi/grpc/log"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
+)
+
+var (
+	grpclogger = &grpclog.Logger{LoggerImpl: log}
+
+	DefaultOptions = []grpc.ServerOption{
+		grpc.ChainUnaryInterceptor(
+			otelgrpc.UnaryServerInterceptor(),
+			logging.UnaryServerInterceptor(grpclogger),
+			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpchandlers.PanicRecovery(grpclogger,
+				func(ctx context.Context) { PanicsTotal.Add(ctx, 1) }))),
+		),
+	}
 )
 
 // WithCOSIEndpoint overrides the default COSI endpoint.
@@ -32,12 +57,12 @@ func WithCOSIEndpoint(url *url.URL) Option {
 // WithSocketPermissions is used to override default permissions (0o660).
 // Permissions that are being set must be between:
 //   - 0o600 - the minimum permissions
-//   - 0o666 - the maximum permissions
+//   - 0o755 - the maximum permissions
 func WithSocketPermissions(perm os.FileMode) Option {
 	return func(d *Driver) error {
 		const (
 			minPermissions os.FileMode = 0o600
-			maxPermissions os.FileMode = 0o666
+			maxPermissions os.FileMode = 0o766
 		)
 
 		if perm < minPermissions || perm > maxPermissions {
@@ -78,16 +103,7 @@ func WithSocketGroup(group *user.Group) Option {
 //   - recovery.UnaryServerInterceptor() - records metric for panics, and recovers (a log is created for each panic);
 func WithDefaultGRPCOptions() Option {
 	return func(d *Driver) error {
-		log := &grpclog.Logger{LoggerImpl: log}
-
-		d.grpcOptions = []grpc.ServerOption{
-			grpc.ChainUnaryInterceptor(
-				otelgrpc.UnaryServerInterceptor(),
-				logging.UnaryServerInterceptor(log),
-				recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(handlers.PanicRecovery(log,
-					func(ctx context.Context) { panicsTotal.Add(ctx, 1) }))),
-			),
-		}
+		d.grpcOptions = DefaultOptions
 
 		return nil
 	}
