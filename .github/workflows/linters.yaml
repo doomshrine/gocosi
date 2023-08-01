@@ -1,0 +1,28 @@
+# This workflow run linters.
+# It is supposed to be run on each push to main branch, as well as for each.
+
+name: linters
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ '*' ]
+
+permissions:
+  contents: read
+
+jobs:
+  golangci-lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+          cache: false
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.53
+          skip-cache: true
