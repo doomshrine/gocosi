@@ -57,7 +57,7 @@ func WithCOSIEndpoint(url *url.URL) Option {
 // WithSocketPermissions is used to override default permissions (0o660).
 // Permissions that are being set must be between:
 //   - 0o600 - the minimum permissions
-//   - 0o755 - the maximum permissions
+//   - 0o766 - the maximum permissions
 func WithSocketPermissions(perm os.FileMode) Option {
 	return func(d *Driver) error {
 		const (
