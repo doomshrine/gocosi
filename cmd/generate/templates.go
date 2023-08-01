@@ -147,21 +147,4 @@ func (s *Server) DriverRevokeBucketAccess(ctx context.Context, req *cosi.DriverR
 const goMod = `module {{ .ModPath }}
 
 go {{ .GoVersion }}
-
-require (
-	github.com/doomshrine/gocosi v0.0.0-00010101000000-000000000000
-	github.com/go-logr/logr v1.2.4
-	sigs.k8s.io/container-object-storage-interface-spec v0.1.0
-)
-
-require (
-	github.com/doomshrine/must v0.0.0-20230730192451-90a955f2459c // indirect
-	github.com/golang/protobuf v1.4.3 // indirect
-	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0 // indirect
-	golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a // indirect
-	golang.org/x/text v0.3.0 // indirect
-	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
-	google.golang.org/grpc v1.35.0 // indirect
-	google.golang.org/protobuf v1.25.0 // indirect
-)
 `

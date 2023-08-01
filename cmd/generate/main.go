@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"text/template"
 )
 
@@ -64,6 +65,15 @@ func realMain() error {
 		if err != nil {
 			return fmt.Errorf("unable to execute teplate '%s': %w", tpl.filepath, err)
 		}
+	}
+
+	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+
+	err = cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed running 'go mod tidy': %w", err)
 	}
 
 	return nil

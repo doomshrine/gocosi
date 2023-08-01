@@ -1,12 +1,18 @@
 package gocosi
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"os/user"
 
+	"github.com/doomshrine/gocosi/grpc/handlers"
+	grpclog "github.com/doomshrine/gocosi/grpc/log"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 )
 
@@ -63,9 +69,25 @@ func WithSocketGroup(group *user.Group) Option {
 }
 
 // WithGRPCOptions overrides all previously applied gRPC ServerOptions by a default options.
+//
+// Default gRPC SeverOptions are:
+// - ChainUnaryInterceptor - consists of:
+//   - grpc.UnaryServerInterceptor() - starts and configures tracer for each request,
+//     records events for request and response (error is recorded as normal event);
+//   - logging.UnaryServerInterceptor() - records and logs according to the global logger (wrapped around grpc/log.Logger);
+//   - recovery.UnaryServerInterceptor() - records metric for panics, and recovers (a log is created for each panic);
 func WithDefaultGRPCOptions() Option {
 	return func(d *Driver) error {
-		d.grpcOptions = []grpc.ServerOption{}
+		log := &grpclog.Logger{LoggerImpl: log}
+
+		d.grpcOptions = []grpc.ServerOption{
+			grpc.ChainUnaryInterceptor(
+				otelgrpc.UnaryServerInterceptor(),
+				logging.UnaryServerInterceptor(log),
+				recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(handlers.PanicRecovery(log,
+					func(ctx context.Context) { panicsTotal.Add(ctx, 1) }))),
+			),
+		}
 
 		return nil
 	}

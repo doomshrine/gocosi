@@ -1,20 +1,18 @@
-# This workflow run linters.
+# This workflow run tests.
 # It is supposed to be run on each push to main branch, as well as for each.
 
-name: linters
+name: tests
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ '*' ]
 
 permissions:
   contents: read
 
 jobs:
-  golangci-lint:
-    name: golangci-lint
+  tests:
+    name: run tests and upload coverage report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +20,8 @@ jobs:
         with:
           go-version: '1.20'
           cache: false
-      - uses: golangci/golangci-lint-action@v3
+      - run: |
+          go test -race -covermode=atomic -coverprofile=coverage.out
+      - uses: codecov/codecov-action@v3
         with:
-          version: v1.53
-          skip-cache: true
+          token: ${{ secrets.CODECOV_TOKEN }}
