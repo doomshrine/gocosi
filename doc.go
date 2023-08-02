@@ -1,4 +1,4 @@
-// Copyright © 2023 doomshrine and gocosi authors. All Rights Reserved.
+// Copyright © 2023 gocosi authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,29 +18,22 @@
 //
 // The following example illustrates using `gocosi` Object Storage Plugin bootstrapper to create a new COSI Object Storage Plugin from scratch:
 //
-// ```bash
-// mkdir -p cosi-osp && cd cosi-osp
-//
 //	go run \
-//	  github.com/doomshrine/gocosi/cmd/generate@main \
-//	  example.com/your/cosi-osp
-//
-// ```
+//	  github.com/doomshrine/gocosi/cmd/bootstrap@main \
+//	  -module example.com/your/cosi-osp \
+//	  -dir cosi-osp
 //
 // You will obtain the following file structure in the `cosi-osp` folder:
 //
-// ```
-// cosi-osp
-// ├── go.mod
-// ├── go.sum
-// ├── main.go
-// └── servers
-//
+//	cosi-osp
+//	├── go.mod
+//	├── go.sum
+//	├── main.go
+//	└── servers
 //	├── identity
 //	│   └── identity.go
 //	└── provisioner
 //	    └── provisioner.go
 //
-// 4 directories, 5 files
-// ```
+//	4 directories, 5 files
 package gocosi
