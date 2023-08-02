@@ -17,25 +17,15 @@ jobs:
     name: Generate changelog and publish a release
     runs-on: ubuntu-latest
     steps:
-      - name: Check if this is full release
-        id: check-tag
-        run: |
-          regex='^(v)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
-          if echo ${{ github.ref_name }} | grep -qE $regex ; then
-            echo "match=true" >> $GITHUB_OUTPUT
-          fi
       - name: Checkout Code
-        if: steps.check-tag.outputs.match == 'true'
         uses: actions/checkout@v3
       - name: Update CHANGELOG
         id: changelog
-        if: steps.check-tag.outputs.match == 'true'
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
           tag: ${{ github.ref_name }}
       - name: Create Release
-        if: steps.check-tag.outputs.match == 'true'
         uses: ncipollo/release-action@v1.12.0
         with:
           allowUpdates: true
