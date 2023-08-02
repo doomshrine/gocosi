@@ -3,7 +3,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![GitHub](https://img.shields.io/github/license/doomshrine/gocosi)](LICENSE.txt)
 [![Go Report Card](https://goreportcard.com/badge/github.com/doomshrine/gocosi)](https://goreportcard.com/report/github.com/doomshrine/gocosi)
-[![codecov](https://codecov.io/gh/shanduur/gocosi/branch/main/graph/badge.svg?token=8NA6HYH122)](https://codecov.io/gh/shanduur/gocosi)
+[![codecov](https://codecov.io/gh/doomshrine/gocosi/branch/main/graph/badge.svg?token=UGGL63A65L)](https://codecov.io/gh/doomshrine/gocosi)
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/doomshrine/gocosi/tests.yaml)](https://github.com/shanduur/gocosi/actions/workflows/tests.yaml)
 [![Static Badge](https://img.shields.io/badge/COSI_Specification-v1alpha1-green)](https://github.com/kubernetes-sigs/container-object-storage-interface-spec/tree/v0.1.0)
 
