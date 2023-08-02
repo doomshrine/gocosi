@@ -23,7 +23,7 @@ A Container Object Storage Interface (COSI) library and other helpful utilities 
   - [Configuration](#configuration)
     - [Environment variables](#environment-variables)
   - [Contributing](#contributing)
-  - [Similar projects](#similar-projects)
+  - [Prior Art](#prior-art)
 
 ## Quick Start
 
@@ -89,6 +89,6 @@ To cater to diverse logging preferences, the gocosi package seamlessly integrate
 
 You want to contibute? Hop into the [CONTRIBUTING.md](CONTRIBUTING.md) and find how you can help the project!
 
-## Similar projects
+## Prior Art
 
-This project was inspired by [dell/gocsi](github.com/dell/gocsi).
+This project was inspired by [rexray/gocsi](https://github.com/rexray/gocsi) and [dell/gocsi](https://github.com/dell/gocsi).
