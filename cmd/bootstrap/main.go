@@ -1,4 +1,4 @@
-// Copyright © 2023 doomshrine and gocosi authors. All Rights Reserved.
+// Copyright © 2023 gocosi authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"text/template"
 )
 
@@ -28,30 +30,40 @@ type Config struct {
 	GoVersion string
 }
 
+var (
+	modPath   string
+	directory string
+)
+
 func main() {
-	if err := realMain(); err != nil {
+	flag.StringVar(&modPath, "module", "example.com/cosi-osp", "Provide name for your new module.")
+	flag.StringVar(&directory, "dir", "cosi-osp", "Location, where the module will be created.")
+	flag.Parse()
+
+	if err := realMain(modPath, directory); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func realMain() error {
-	if len(os.Args) < 2 {
-		return errors.New("no name specified")
+func realMain(modPath, location string) error {
+	if modPath == "" || location == "" {
+		return errors.New("invalid argument")
 	}
 
 	cfg := Config{
-		ModPath:   os.Args[1],
+		ModPath:   modPath,
 		GoVersion: "1.20",
 	}
 
-	err := os.MkdirAll("./servers/provisioner", 0o755)
-	if err != nil {
-		return fmt.Errorf("unable to create './servers/provisioner' directory: %w", err)
-	}
-
-	err = os.MkdirAll("./servers/identity", 0o755)
-	if err != nil {
-		return fmt.Errorf("unable to create './servers/identity' directory: %w", err)
+	for _, dir := range []string{
+		location,
+		path.Join(location, "servers/provisioner"),
+		path.Join(location, "servers/identity"),
+	} {
+		err := os.MkdirAll(dir, 0o755)
+		if err != nil {
+			return fmt.Errorf("unable to create '%s' directory: %w", dir, err)
+		}
 	}
 
 	for _, tpl := range []struct {
@@ -59,19 +71,19 @@ func realMain() error {
 		template string
 	}{
 		{
-			filepath: "go.mod",
+			filepath: path.Join(location, "go.mod"),
 			template: goMod,
 		},
 		{
-			filepath: "main.go",
+			filepath: path.Join(location, "main.go"),
 			template: mainGo,
 		},
 		{
-			filepath: "./servers/provisioner/provisioner.go",
+			filepath: path.Join(location, "./servers/provisioner/provisioner.go"),
 			template: provisionerGo,
 		},
 		{
-			filepath: "./servers/identity/identity.go",
+			filepath: path.Join(location, "./servers/identity/identity.go"),
 			template: identityGo,
 		},
 	} {
@@ -82,10 +94,11 @@ func realMain() error {
 	}
 
 	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Dir = location
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 
-	err = cmd.Run()
+	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("failed running 'go mod tidy': %w", err)
 	}

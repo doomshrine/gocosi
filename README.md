@@ -22,10 +22,10 @@ A Container Object Storage Interface (COSI) library and other helpful utilities 
 The following example illustrates using `gocosi` Object Storage Plugin bootstrapper to create a new COSI Object Storage Plugin from scratch:
 
 ```bash
-mkdir -p cosi-osp && cd cosi-osp
 go run \
-  github.com/doomshrine/gocosi/cmd/generate@main \
-  example.com/your/cosi-osp
+  github.com/doomshrine/gocosi/cmd/bootstrap@main \
+  -module example.com/your/cosi-osp \
+  -dir cosi-osp
 ```
 
 You will obtain the following file structure in the `cosi-osp` folder:
