@@ -1,7 +1,7 @@
 # This workflow run tests.
 # It is supposed to be run on each push to main branch, as well as for each.
 
-name: tests
+name: Tests
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   tests:
-    name: run tests and upload coverage report
+    name: Run tests and upload coverage report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

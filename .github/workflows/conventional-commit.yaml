@@ -4,7 +4,7 @@
 #   OR
 #   - pull request is open to the main;
 
-name: Lint commit messages
+name: Conventional commit
 
 on:
   push:
