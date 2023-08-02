@@ -3,7 +3,7 @@ module github.com/doomshrine/gocosi
 go 1.20
 
 require (
-	github.com/doomshrine/must v0.0.0-20230730192451-90a955f2459c
+	github.com/doomshrine/must v0.0.0-20230802075114-89b41826f12c
 	github.com/doomshrine/testcontext v0.0.0-20230730193202-d757633b310c
 	github.com/go-logr/logr v1.2.4
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
