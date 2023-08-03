@@ -25,6 +25,8 @@ A Container Object Storage Interface (COSI) library and other helpful utilities 
   - [Contributing](#contributing)
   - [Prior Art](#prior-art)
 
+[![asciicast](https://asciinema.org/a/600446.svg)](https://asciinema.org/a/600446)
+
 ## Quick Start
 
 The following example illustrates using `gocosi` Object Storage Plugin bootstrapper to create a new COSI Object Storage Plugin from scratch:
