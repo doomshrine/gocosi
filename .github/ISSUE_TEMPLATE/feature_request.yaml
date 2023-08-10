@@ -1,5 +1,5 @@
 name: Feature Request
-description: You want to submit a feature Open this one.
+description: You want to submit a feature request? Open this one.
 title: "[FEATURE]: <title>"
 labels:
   - kind/feature
