@@ -21,76 +21,60 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path"
-	"text/template"
+
+	"github.com/doomshrine/gocosi/cmd/bootstrap/internal/config"
+	"github.com/doomshrine/gocosi/cmd/bootstrap/internal/template"
 )
 
-type Config struct {
-	ModPath   string
-	GoVersion string
-}
-
 var (
-	modPath   string
-	directory string
+	modPath       string
+	directory     string
+	image         string
+	rootlessImage string
+	rootless      bool
 )
 
 func main() {
 	flag.StringVar(&modPath, "module", "example.com/cosi-osp", "Provide name for your new module.")
 	flag.StringVar(&directory, "dir", "cosi-osp", "Location, where the module will be created.")
+	flag.StringVar(&image, "image", config.DefaultImage, "")
+	flag.StringVar(&rootlessImage, "rootless-image", config.DefaultRootlessImage, "")
+	flag.BoolVar(&rootless, "rootless", false, "")
 	flag.Parse()
 
-	if err := realMain(modPath, directory); err != nil {
+	if err := realMain(modPath,
+		directory,
+		image,
+		rootlessImage,
+		rootless); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func realMain(modPath, location string) error {
-	if modPath == "" || location == "" {
+func realMain(modPath, location, image, rootlessImage string, rootless bool) error {
+	if modPath == "" || location == "" || image == "" || rootlessImage == "" {
 		return errors.New("invalid argument")
 	}
 
-	cfg := Config{
-		ModPath:   modPath,
-		GoVersion: "1.20",
+	if _, err := os.Stat(location); err == nil {
+		return errors.New("location already exists")
+	} else if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("unexpected error: %w", err)
 	}
 
-	for _, dir := range []string{
-		location,
-		path.Join(location, "servers/provisioner"),
-		path.Join(location, "servers/identity"),
-	} {
-		err := os.MkdirAll(dir, 0o755)
-		if err != nil {
-			return fmt.Errorf("unable to create '%s' directory: %w", dir, err)
-		}
+	cfg, err := config.New(modPath,
+		config.WithOutputDir(location),
+		config.WithDockerImage(image),
+		config.WithDockerRootlessImage(rootlessImage),
+		config.WithRootless(rootless),
+	)
+	if err != nil {
+		return fmt.Errorf("invalid config: %w", err)
 	}
 
-	for _, tpl := range []struct {
-		filepath string
-		template string
-	}{
-		{
-			filepath: path.Join(location, "go.mod"),
-			template: goMod,
-		},
-		{
-			filepath: path.Join(location, "main.go"),
-			template: mainGo,
-		},
-		{
-			filepath: path.Join(location, "./servers/provisioner/provisioner.go"),
-			template: provisionerGo,
-		},
-		{
-			filepath: path.Join(location, "./servers/identity/identity.go"),
-			template: identityGo,
-		},
-	} {
-		err := execTemplate(tpl.filepath, tpl.template, cfg)
-		if err != nil {
-			return fmt.Errorf("unable to execute teplate '%s': %w", tpl.filepath, err)
-		}
+	err = template.Write(templateFS, cfg, "")
+	if err != nil {
+		return fmt.Errorf("error writing template: %w", err)
 	}
 
 	cmd := exec.Command("go", "mod", "tidy")
@@ -98,28 +82,9 @@ func realMain(modPath, location string) error {
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		return fmt.Errorf("failed running 'go mod tidy': %w", err)
-	}
-
-	return nil
-}
-
-func execTemplate(filepath, tpl string, cfg Config) error {
-	t, err := template.New(filepath).Parse(tpl)
-	if err != nil {
-		return fmt.Errorf("unable to build '%s' template: %w", filepath, err)
-	}
-
-	f, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE, 0o644)
-	if err != nil {
-		return fmt.Errorf("unable to create '%s': %w", filepath, err)
-	}
-
-	err = t.Execute(f, cfg)
-	if err != nil {
-		return fmt.Errorf("unable to write '%s' template: %w", filepath, err)
 	}
 
 	return nil

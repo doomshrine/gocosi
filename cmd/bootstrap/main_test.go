@@ -5,8 +5,10 @@ import (
 	"context"
 	"os"
 	"os/exec"
+	"path"
 	"testing"
 
+	"github.com/doomshrine/gocosi/cmd/bootstrap/internal/config"
 	"github.com/doomshrine/testcontext"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,14 +27,17 @@ func TestRealMain(t *testing.T) {
 
 	defer os.RemoveAll(dir)
 
-	err = realMain(TestModPath, dir)
+	ospDir := path.Join(dir, "test-osp")
+
+	err = realMain(TestModPath, ospDir, config.DefaultImage, config.DefaultRootlessImage, false)
 	require.NoError(t, err)
+	require.FileExists(t, path.Join(ospDir, "go.mod"))
 
 	bufOut := new(bytes.Buffer)
 	bufErr := new(bytes.Buffer)
 
 	cmd := exec.CommandContext(ctx, "go", "build")
-	cmd.Dir = dir
+	cmd.Dir = ospDir
 	cmd.Stderr = bufErr
 	cmd.Stdout = bufOut
 

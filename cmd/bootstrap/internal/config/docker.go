@@ -12,9 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package config
 
-import "embed"
+const (
+	DefaultRootlessImage = "docker.io/rockylinux/rockylinux:9-ubi"
+	DefaultImage         = "gcr.io/distroless/static:latest"
+)
 
-//go:embed template
-var templateFS embed.FS
+type Docker struct {
+	RootlessImage string
+	Image         string
+}
+
+func newDocker() *Docker {
+	return &Docker{
+		RootlessImage: DefaultRootlessImage,
+		Image:         DefaultImage,
+	}
+}
