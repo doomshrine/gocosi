@@ -14,6 +14,7 @@ A Container Object Storage Interface (COSI) library and other helpful utilities 
 - [gocosi](#gocosi)
   - [Table of contents](#table-of-contents)
   - [Quick Start](#quick-start)
+    - [Bootstrap parameters](#bootstrap-parameters)
   - [Features](#features)
     - [Automatic Starting of Traces](#automatic-starting-of-traces)
     - [Automatic Panic Recovery](#automatic-panic-recovery)
@@ -42,6 +43,10 @@ You will obtain the following file structure in the `cosi-osp` folder:
 
 ```
 cosi-osp
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── README.md
 ├── go.mod
 ├── go.sum
 ├── main.go
@@ -51,8 +56,18 @@ cosi-osp
     └── provisioner
         └── provisioner.go
 
-4 directories, 5 files
+4 directories, 9 files
 ```
+
+### Bootstrap parameters
+
+| Flag              | Default                                                    | Description                                                    |
+|-------------------|------------------------------------------------------------|----------------------------------------------------------------|
+| `-module`         | `example.com/cosi-osp`                                     | Override name for your new module.                             |
+| `-dir`            | Location/Path, where the module will be created.`cosi-osp` |                                                                |
+| `-image`          | `gcr.io/distroless/static:latest`                          | Override the default base Docker image.                        |
+| `-rootless-image` | `docker.io/rockylinux/rockylinux:9-ubi`                    | Override the default base Docker image for rootless container. |
+| `-rootless`       | `false`                                                    | Generate the Dockerfile for rootless container.                |
 
 ## Features
 

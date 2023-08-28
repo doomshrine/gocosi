@@ -16,6 +16,7 @@ package testutils
 
 import (
 	"os"
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,20 @@ import (
 func TestMustMkdriTemp(t *testing.T) {
 	t.Parallel()
 
-	dir := MustMkdirTemp()
-	defer os.RemoveAll(dir)
-	assert.DirExists(t, dir, "")
+	assert.NotPanics(t, func() {
+		dir := MustMkdirTemp()
+		defer os.RemoveAll(dir)
+		assert.DirExists(t, dir, "")
+	})
+}
+
+func TestMustMkUnixTemp(t *testing.T) {
+	t.Parallel()
+
+	assert.NotPanics(t, func() {
+		sock := MustMkUnixTemp("test.sock")
+		tp, _ := path.Split(sock.Path)
+		defer os.RemoveAll(tp)
+		assert.DirExists(t, tp)
+	})
 }

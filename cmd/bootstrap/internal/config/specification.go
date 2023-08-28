@@ -12,9 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package config
 
-import "embed"
+const (
+	cosiSpecAPI    = "v1alpha1"
+	cosiSpecSemVer = "v0.1.0"
+)
 
-//go:embed template
-var templateFS embed.FS
+type COSISpecification struct {
+	SemanticVersion string
+	APIVersion      string
+}
+
+func newSpecification() *COSISpecification {
+	return &COSISpecification{
+		SemanticVersion: cosiSpecSemVer,
+		APIVersion:      cosiSpecAPI,
+	}
+}

@@ -1,0 +1,3 @@
+module {{ .ModPath }}
+
+go {{ .GoVersion }}
