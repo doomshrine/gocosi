@@ -4,18 +4,23 @@ package provisioner
 import (
 	"context"
 
+	"github.com/go-logr/logr"
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
 )
 
 // Server implements cosi.ProvisionerServer interface.
-type Server struct{}
+type Server struct{
+  log logr.Logger
+}
 
 // Interface guards.
 var _ cosi.ProvisionerServer = (*Server)(nil)
 
 // New returns provisioner.Server with default values.
-func New() *Server {
-	return &Server{}
+func New(logger logr.Logger) *Server {
+	return &Server{
+		log: logger,
+	}
 }
 
 // DriverCreateBucket call is made to create the bucket in the backend.

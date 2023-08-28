@@ -74,7 +74,7 @@ func TestRealMainWithDockerRootless(t *testing.T) {
 	bufOut := new(bytes.Buffer)
 	bufErr := new(bytes.Buffer)
 
-	cmd := exec.CommandContext(ctx, "docker", "build", "--tag=gocosi:test", "--no-cache", ".")
+	cmd := exec.CommandContext(ctx, "docker", "build", "--tag=gocosi:rootless", "--no-cache", ".")
 	cmd.Dir = ospDir
 	cmd.Stderr = bufErr
 	cmd.Stdout = bufOut
@@ -85,7 +85,7 @@ func TestRealMainWithDockerRootless(t *testing.T) {
 	bufOut.Reset()
 	bufErr.Reset()
 
-	cmd = exec.CommandContext(ctx, "docker", "image", "rm", "gocosi:test")
+	cmd = exec.CommandContext(ctx, "docker", "image", "rm", "gocosi:rootless")
 	cmd.Dir = ospDir
 	cmd.Stderr = bufErr
 	cmd.Stdout = bufOut

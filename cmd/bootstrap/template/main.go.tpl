@@ -22,6 +22,7 @@ func init() {
 	// Setup your logger here.
 	// You can use one of multiple available implementation, like:
 	//   - https://github.com/kubernetes/klog/tree/main/klogr
+	//   - https://github.com/go-logr/logr/tree/master/slogr
 	//   - https://github.com/go-logr/stdr
 	//   - https://github.com/bombsimon/logrusr
 }
@@ -33,8 +34,8 @@ func main() {
 	// put it below this line.
 
 	driver, err := gocosi.New(
-		identity.New(driverName),
-		provisioner.New(),
+		identity.New(driverName, log),
+		provisioner.New(log),
 		gocosi.WithDefaultGRPCOptions(),
 	)
 	if err != nil {

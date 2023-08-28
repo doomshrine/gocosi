@@ -35,11 +35,11 @@ var (
 )
 
 func main() {
-	flag.StringVar(&modPath, "module", "example.com/cosi-osp", "Provide name for your new module.")
-	flag.StringVar(&directory, "dir", "cosi-osp", "Location, where the module will be created.")
-	flag.StringVar(&image, "image", config.DefaultImage, "")
-	flag.StringVar(&rootlessImage, "rootless-image", config.DefaultRootlessImage, "")
-	flag.BoolVar(&rootless, "rootless", false, "")
+	flag.StringVar(&modPath, "module", "example.com/cosi-osp", "Override name for your new module.")
+	flag.StringVar(&directory, "dir", "cosi-osp", "Location/Path, where the module will be created.")
+	flag.StringVar(&image, "image", config.DefaultImage, "Override the default base Docker image.")
+	flag.StringVar(&rootlessImage, "rootless-image", config.DefaultRootlessImage, "Override the default base Docker image for rootless container.")
+	flag.BoolVar(&rootless, "rootless", false, "Generate the Dockerfile for rootless container.")
 	flag.Parse()
 
 	if err := realMain(modPath,

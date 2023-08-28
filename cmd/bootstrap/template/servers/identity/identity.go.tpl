@@ -4,11 +4,13 @@ package identity
 import (
 	"context"
 
+	"github.com/go-logr/logr"
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
 )
 
 // Server implements cosi.IdentityServer interface.
 type Server struct {
+  log  logr.Logger
 	name string
 }
 
@@ -16,12 +18,13 @@ type Server struct {
 var _ cosi.IdentityServer = (*Server)(nil)
 
 // New returns identitu.Server with name set to the "name" argument.
-func New(name string) *Server {
+func New(name string, logger logr.Logger) *Server {
 	if name == "" {
 		panic("empty name")
 	}
 
 	return &Server{
+		log: logger,
 		name: name,
 	}
 }
