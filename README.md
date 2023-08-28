@@ -26,7 +26,7 @@ A Container Object Storage Interface (COSI) library and other helpful utilities 
   - [Contributing](#contributing)
   - [Prior Art](#prior-art)
 
-[![asciicast](https://asciinema.org/a/600446.svg)](https://asciinema.org/a/600446)
+[![asciicast](https://asciinema.org/a/605022.svg)](https://asciinema.org/a/605022)
 
 ## Quick Start
 
