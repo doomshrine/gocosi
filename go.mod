@@ -8,7 +8,7 @@ require (
 	github.com/go-logr/logr v1.2.4
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
 	github.com/stretchr/testify v1.8.4
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.42.0
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.43.0
 	go.opentelemetry.io/otel v1.17.0
 	google.golang.org/grpc v1.57.0
 	sigs.k8s.io/container-object-storage-interface-spec v0.1.0
