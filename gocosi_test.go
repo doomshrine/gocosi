@@ -29,9 +29,8 @@ import (
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
 )
 
+//nolint:paralleltest
 func TestSetLogger(t *testing.T) {
-	t.Parallel()
-
 	impl := logr.New(logr.Discard().GetSink())
 	SetLogger(impl)
 	assert.Equal(t, impl, log)
