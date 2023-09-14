@@ -27,32 +27,23 @@ import (
 )
 
 var (
-	modPath       string
-	directory     string
-	image         string
-	rootlessImage string
-	rootless      bool
+	modPath   string
+	directory string
 )
 
 func main() {
 	flag.StringVar(&modPath, "module", "example.com/cosi-osp", "Override name for your new module.")
 	flag.StringVar(&directory, "dir", "cosi-osp", "Location/Path, where the module will be created.")
-	flag.StringVar(&image, "image", config.DefaultImage, "Override the default base Docker image.")
-	flag.StringVar(&rootlessImage, "rootless-image", config.DefaultRootlessImage, "Override the default base Docker image for rootless container.")
-	flag.BoolVar(&rootless, "rootless", false, "Generate the Dockerfile for rootless container.")
 	flag.Parse()
 
 	if err := realMain(modPath,
-		directory,
-		image,
-		rootlessImage,
-		rootless); err != nil {
+		directory); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func realMain(modPath, location, image, rootlessImage string, rootless bool) error {
-	if modPath == "" || location == "" || image == "" || rootlessImage == "" {
+func realMain(modPath, location string) error {
+	if modPath == "" || location == "" {
 		return errors.New("invalid argument")
 	}
 
@@ -64,9 +55,6 @@ func realMain(modPath, location, image, rootlessImage string, rootless bool) err
 
 	cfg, err := config.New(modPath,
 		config.WithOutputDir(location),
-		config.WithDockerImage(image),
-		config.WithDockerRootlessImage(rootlessImage),
-		config.WithRootless(rootless),
 	)
 	if err != nil {
 		return fmt.Errorf("invalid config: %w", err)

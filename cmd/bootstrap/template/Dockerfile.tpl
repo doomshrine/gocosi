@@ -2,7 +2,7 @@
 # First stage:
 #   - Building the COSI OSP using the default Go image.
 ###############################################################################
-FROM --platform=${BUILDPLATFORM} docker.io/library/golang:{{ .GoVersion }} AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/golang:1.21.1 AS builder
 
 # Set the working directory.
 WORKDIR /cosi-osp
@@ -30,14 +30,10 @@ RUN go build -o build/cosi-osp main.go
 # Second Stage:
 #   - Runtime image.
 #
-# NOTE: you should replace the latest/ubi9 with specific digest, to ensure,
-#   that builds are consistent.
+# NOTE: you should replace the latest with specific digest, to ensure that
+#       builds are consistent.
 ###############################################################################
-{{ if .Rootless }}
-FROM --platform=${BUILDPLATFORM} {{ .Docker.RootlessImage }} AS runtime
-{{ else }}
-FROM --platform=${BUILDPLATFORM} {{ .Docker.Image }} AS runtime
-{{ end }}
+FROM --platform=${BUILDPLATFORM} gcr.io/distroless/static:latest AS runtime
 
 # Set the working directory.
 WORKDIR /cosi
@@ -53,25 +49,7 @@ HEALTHCHECK NONE
 
 # Set the default environment.
 ENV COSI_ENDPOINT="/var/lib/cosi/cosi.sock"
-{{ if .Rootless }}
-ENV X_COSI_ENDPOINT_PERMS="0755"
-ENV X_COSI_ENDPOINT_USER="1001"
-ENV X_COSI_ENDPOINT_GROUP="1001"
-
-# Create a non-root user and set permissions on the files.
-RUN echo "cosi:*:1001:cosi-user" >> /etc/group && \
-    echo "cosi-user:*:1001:1001::/cosi:/bin/false" >> /etc/passwd && \
-    chown 1001:1001 /cosi && \
-    chmod 0550 /cosi && \
-    mkdir -p /var/lib/cosi && \
-    chown -R 1001:1001 /var/lib/cosi
-
-# Copy the newly build binary to final image, and set the permissions.
-COPY --from=builder --chown=1001:1001 /cosi-osp/build/cosi-osp /usr/bin/cosi-osp
-RUN chmod 0550 /cosi
-{{ else }}
 COPY --from=builder /cosi-osp/build/cosi-osp /usr/bin/cosi-osp
-{{ end }}
 
 # Set the correct entrypoint and command arguments.
 ENTRYPOINT [ "/usr/bin/cosi-osp" ]

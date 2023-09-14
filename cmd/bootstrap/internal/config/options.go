@@ -18,32 +18,6 @@ import "errors"
 
 type Option func(c *Config) error
 
-// WithDockerImage ...
-func WithDockerImage(image string) Option {
-	return func(c *Config) error {
-		if image == "" {
-			return errors.New("empty image")
-		}
-
-		c.Docker.Image = image
-
-		return nil
-	}
-}
-
-// WithDockerRootlessImage ...
-func WithDockerRootlessImage(image string) Option {
-	return func(c *Config) error {
-		if image == "" {
-			return errors.New("empty image")
-		}
-
-		c.Docker.RootlessImage = image
-
-		return nil
-	}
-}
-
 // WithTemplateRoot ...
 func WithTemplateRoot(root string) Option {
 	return func(c *Config) error {
@@ -65,15 +39,6 @@ func WithOutputDir(output string) Option {
 		}
 
 		c.OutputDir = output
-
-		return nil
-	}
-}
-
-// WithRootless ...
-func WithRootless(yes bool) Option {
-	return func(c *Config) error {
-		c.Rootless = yes
 
 		return nil
 	}
