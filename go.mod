@@ -10,7 +10,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.44.0
 	go.opentelemetry.io/otel v1.18.0
-	google.golang.org/grpc v1.58.0
+	google.golang.org/grpc v1.58.1
 	sigs.k8s.io/container-object-storage-interface-spec v0.1.0
 )
 
