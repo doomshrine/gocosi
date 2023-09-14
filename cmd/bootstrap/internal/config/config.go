@@ -25,16 +25,13 @@ import (
 )
 
 type Config struct {
-	ModPath      *url.URL
-	TemplateRoot string
-	OutputDir    string
-	GoVersion    string
-	Year         int
-	Comment      string
-	Rootless     bool
-
+	ModPath           *url.URL
+	TemplateRoot      string
+	OutputDir         string
+	GoVersion         string
+	Year              int
+	Comment           string
 	COSISpecification *COSISpecification
-	Docker            *Docker
 }
 
 // New returns new Config struct, given that the modPath is a valid URL.
@@ -46,14 +43,11 @@ func New(modPath string, opts ...Option) (*Config, error) {
 	}
 
 	cfg := &Config{
-		ModPath:      modURL,
-		GoVersion:    trimVersion(runtime.Version()),
-		Year:         time.Now().Year(),
-		Comment:      "//",
-		TemplateRoot: "template",
-		Rootless:     false,
-
-		Docker:            newDocker(),
+		ModPath:           modURL,
+		GoVersion:         trimVersion(runtime.Version()),
+		Year:              time.Now().Year(),
+		Comment:           "//",
+		TemplateRoot:      "template",
 		COSISpecification: newSpecification(),
 	}
 

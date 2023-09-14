@@ -8,7 +8,6 @@ import (
 	"path"
 	"testing"
 
-	"github.com/doomshrine/gocosi/cmd/bootstrap/internal/config"
 	"github.com/doomshrine/testcontext"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,7 +28,7 @@ func TestRealMain(t *testing.T) {
 
 	ospDir := path.Join(dir, "test-osp")
 
-	err = realMain(TestModPath, ospDir, config.DefaultImage, config.DefaultRootlessImage, false)
+	err = realMain(TestModPath, ospDir)
 	require.NoError(t, err)
 	require.FileExists(t, path.Join(ospDir, "go.mod"))
 
