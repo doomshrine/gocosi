@@ -7,6 +7,7 @@ import (
 	"github.com/doomshrine/gocosi"
 	"github.com/go-logr/logr"
 	"go.opentelemetry.io/otel/sdk/resource"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0" // FIXME: this might need manual update
 
 	"{{ .ModPath }}/servers/identity"
 	"{{ .ModPath }}/servers/provisioner"
