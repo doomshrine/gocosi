@@ -65,9 +65,6 @@ cosi-osp
 |-------------------|-----------------------------------------|----------------------------------------------------------------|
 | `-module`         | `example.com/cosi-osp`                  | Override name for your new module.                             |
 | `-dir`            | `cosi-osp`                              | Location/Path, where the module will be created.               |
-| `-image`          | `gcr.io/distroless/static:latest`       | Override the default base Docker image.                        |
-| `-rootless-image` | `docker.io/rockylinux/rockylinux:9-ubi` | Override the default base Docker image for rootless container. |
-| `-rootless`       | `false`                                 | Generate the Dockerfile for rootless container.                |
 
 ## Features
 

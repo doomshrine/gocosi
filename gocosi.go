@@ -36,6 +36,9 @@ type Driver struct {
 	identity    cosi.IdentityServer
 	provisioner cosi.ProvisionerServer
 
+	traceexporter  TraceExporter
+	metricexporter MetricExporter
+
 	endpoint    *Endpoint
 	grpcOptions []grpc.ServerOption
 

@@ -15,6 +15,8 @@ import (
 var (
 	driverName = "cosi.example.com" // FIXME: replace with your own driver name
 
+	exporterKind = gocosi.HTTPExporter
+
 	log logr.Logger
 )
 
@@ -37,6 +39,8 @@ func main() {
 		identity.New(driverName, log),
 		provisioner.New(log),
 		gocosi.WithDefaultGRPCOptions(),
+		gocosi.WithDefaultMetricExporter(exporterKind),
+		gocosi.WithDefaultTraceExporter(exporterKind),
 	)
 	if err != nil {
 		log.Error(err, "failed to create COSI Driver")
