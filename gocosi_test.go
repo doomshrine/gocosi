@@ -57,6 +57,7 @@ func TestNew(t *testing.T) {
 			_, err := New(
 				tc.identity,
 				tc.provisioner,
+				nil,
 				tc.options...,
 			)
 			assert.NoError(t, err)
@@ -80,6 +81,7 @@ func TestRun(t *testing.T) {
 				return New(
 					identity,
 					provisioner,
+					nil,
 					WithCOSIEndpoint(testutils.MustMkUnixTemp("cosi.sock")),
 				)
 			}()),

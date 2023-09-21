@@ -6,7 +6,7 @@ import (
 
 	"github.com/doomshrine/gocosi"
 	"github.com/go-logr/logr"
-
+	"go.opentelemetry.io/otel/sdk/resource"
 
 	"{{ .ModPath }}/servers/identity"
 	"{{ .ModPath }}/servers/provisioner"
@@ -14,6 +14,7 @@ import (
 
 var (
 	driverName = "cosi.example.com" // FIXME: replace with your own driver name
+	driverVersion = "v0.1.0" // FIXME: replace with your own driver version
 
 	exporterKind = gocosi.HTTPExporter
 
@@ -32,12 +33,19 @@ func init() {
 func main() {
 	gocosi.SetLogger(log)
 
+	res := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceName(driverName),
+		semconv.ServiceVersion(driverVersion),
+	)
+
 	// If there is any additional confifuration needed for your COSI Driver,
 	// put it below this line.
 
 	driver, err := gocosi.New(
 		identity.New(driverName, log),
 		provisioner.New(log),
+		res,
 		gocosi.WithDefaultGRPCOptions(),
 		gocosi.WithDefaultMetricExporter(exporterKind),
 		gocosi.WithDefaultTraceExporter(exporterKind),

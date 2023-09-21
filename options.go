@@ -27,10 +27,15 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/propagation"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 )
 
@@ -166,7 +171,12 @@ func WithHTTPMetricExporter(opt ...otlpmetrichttp.Option) Option {
 			return fmt.Errorf("unable to create new OTLP Metric HTTP Exporter: %w", err)
 		}
 
-		d.metricexporter = exp
+		shutdown, err := registerMetricExporter(d.resource, exp)
+		if err != nil {
+			return fmt.Errorf("unable to register OTLP Metric HTTP Exporter: %w", err)
+		}
+
+		d.metricShutdownFunc = shutdown
 
 		return nil
 	}
@@ -180,7 +190,12 @@ func WithGRPCMetricExporter(opt ...otlpmetricgrpc.Option) Option {
 			return fmt.Errorf("unable to create new OTLP Metric GRPC Exporter: %w", err)
 		}
 
-		d.metricexporter = exp
+		shutdown, err := registerMetricExporter(d.resource, exp)
+		if err != nil {
+			return fmt.Errorf("unable to register OTLP Metric GRPC Exporter: %w", err)
+		}
+
+		d.metricShutdownFunc = shutdown
 
 		return nil
 	}
@@ -205,10 +220,15 @@ func WithHTTPTraceExporter(opt ...otlptracehttp.Option) Option {
 	return func(d *Driver) error {
 		exp, err := otlptracehttp.New(context.TODO(), opt...)
 		if err != nil {
-			return fmt.Errorf("unable to create new OTLP Metric GRPC Exporter: %w", err)
+			return fmt.Errorf("unable to create new OTLP Trace HTTP Exporter: %w", err)
 		}
 
-		d.traceexporter = exp
+		shutdown, err := registerTraceExporter(d.resource, exp)
+		if err != nil {
+			return fmt.Errorf("unable to register OTLP Trace HTTP Exporter: %w", err)
+		}
+
+		d.traceShutdownFunc = shutdown
 
 		return nil
 	}
@@ -219,11 +239,56 @@ func WithGRPCTraceExporter(opt ...otlptracegrpc.Option) Option {
 	return func(d *Driver) error {
 		exp, err := otlptracegrpc.New(context.TODO(), opt...)
 		if err != nil {
-			return fmt.Errorf("unable to create new OTLP Metric GRPC Exporter: %w", err)
+			return fmt.Errorf("unable to create new OTLP Trace GRPC Exporter: %w", err)
 		}
 
-		d.traceexporter = exp
+		shutdown, err := registerTraceExporter(d.resource, exp)
+		if err != nil {
+			return fmt.Errorf("unable to register OTLP Trace GRPC Exporter: %w", err)
+		}
+
+		d.traceShutdownFunc = shutdown
 
 		return nil
 	}
+}
+
+func registerTraceExporter(res *resource.Resource, exporter sdktrace.SpanExporter) (func(context.Context) error, error) {
+	bsp := sdktrace.NewBatchSpanProcessor(exporter)
+
+	options := []sdktrace.TracerProviderOption{
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithSpanProcessor(bsp),
+	}
+	if res != nil {
+		options = append(options, sdktrace.WithResource(res))
+	}
+
+	tp := sdktrace.NewTracerProvider(options...)
+	otel.SetTracerProvider(tp)
+
+	// set global propagator to tracecontext (the default is no-op).
+	otel.SetTextMapPropagator(propagation.TraceContext{})
+
+	// Shutdown will flush any remaining spans and shut down the exporter.
+	return tp.Shutdown, nil
+}
+
+func registerMetricExporter(res *resource.Resource, exporter sdkmetric.Exporter) (func(context.Context) error, error) {
+	// This reader is used as a stand-in for a reader that will actually export
+	// data. See exporters in the go.opentelemetry.io/otel/exporters package
+	// for more information.
+	reader := sdkmetric.NewPeriodicReader(exporter)
+
+	options := []sdkmetric.Option{
+		sdkmetric.WithReader(reader),
+	}
+	if res != nil {
+		options = append(options, sdkmetric.WithResource(res))
+	}
+
+	mp := sdkmetric.NewMeterProvider(options...)
+	otel.SetMeterProvider(mp)
+
+	return mp.Shutdown, nil
 }
