@@ -48,7 +48,7 @@ VOLUME [ "/var/lib/cosi" ]
 HEALTHCHECK NONE
 
 # Set the default environment.
-ENV COSI_ENDPOINT="/var/lib/cosi/cosi.sock"
+ENV COSI_ENDPOINT="unix:///var/lib/cosi/cosi.sock"
 COPY --from=builder /cosi-osp/build/cosi-osp /usr/bin/cosi-osp
 
 # Set the correct entrypoint and command arguments.

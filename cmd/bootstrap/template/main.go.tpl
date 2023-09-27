@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	stdlog "log"
 	"os"
 
 	"github.com/doomshrine/gocosi"
 	"github.com/go-logr/logr"
+	"github.com/go-logr/stdr"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0" // FIXME: this might need manual update
 
@@ -29,6 +31,8 @@ func init() {
 	//   - https://github.com/go-logr/logr/tree/master/slogr
 	//   - https://github.com/go-logr/stdr
 	//   - https://github.com/bombsimon/logrusr
+	stdr.SetVerbosity(10)
+	log = stdr.New(stdlog.New(os.Stdout, "", stdlog.LstdFlags))
 }
 
 func main() {
