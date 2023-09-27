@@ -24,6 +24,7 @@ import (
 
 	"github.com/doomshrine/must"
 	"github.com/go-logr/logr"
+	"go.opentelemetry.io/otel/sdk/resource"
 	"google.golang.org/grpc"
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
 )
@@ -36,6 +37,10 @@ type Driver struct {
 	identity    cosi.IdentityServer
 	provisioner cosi.ProvisionerServer
 
+	resource           *resource.Resource
+	traceShutdownFunc  func(ctx context.Context) error
+	metricShutdownFunc func(ctx context.Context) error
+
 	endpoint    *Endpoint
 	grpcOptions []grpc.ServerOption
 
@@ -47,10 +52,12 @@ type Driver struct {
 type Option func(*Driver) error
 
 // New creates a new instance of the COSI driver.
-func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, opts ...Option) (*Driver, error) {
+func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, res *resource.Resource, opts ...Option) (*Driver, error) {
 	p := &Driver{
 		identity:    identity,
 		provisioner: provisioner,
+
+		resource: res,
 
 		endpoint: &Endpoint{
 			permissions: 0o755,

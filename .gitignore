@@ -20,5 +20,7 @@
 # Go workspace file
 go.work
 
-# OSP Folder
-cosi-osp
+# Demo
+cosi-osp/
+demo/
+*.cast

@@ -13,3 +13,127 @@
 // limitations under the License.
 
 package gocosi
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestWithDefaultMetricExporter(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name string
+		kind ExporterKind
+	}{
+		{
+			name: "default HTTP metric exporter",
+			kind: HTTPExporter,
+		},
+		{
+			name: "default GRPC metric exporter",
+			kind: GRPCExporter,
+		},
+	} {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			opt := WithDefaultMetricExporter(tc.kind)
+
+			d := &Driver{}
+
+			err := opt(d)
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestWithHTTPMetricExporter(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name string
+	}{} {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+		})
+	}
+}
+
+func TestWithGRPCMetricExporter(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name string
+	}{} {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+		})
+	}
+}
+
+func TestWithDefaultTraceExporter(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name string
+		kind ExporterKind
+	}{
+		{
+			name: "default HTTP trace exporter",
+			kind: HTTPExporter,
+		},
+		{
+			name: "default GRPC trace exporter",
+			kind: GRPCExporter,
+		},
+	} {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			opt := WithDefaultTraceExporter(tc.kind)
+
+			d := &Driver{}
+
+			err := opt(d)
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestWithHTTPTraceExporter(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name string
+	}{} {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+		})
+	}
+}
+
+func TestWithGRPCTraceExporter(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name string
+	}{} {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+		})
+	}
+}

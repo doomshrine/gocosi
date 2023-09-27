@@ -26,7 +26,7 @@ A Container Object Storage Interface (COSI) library and other helpful utilities 
   - [Contributing](#contributing)
   - [Prior Art](#prior-art)
 
-[![asciicast](https://asciinema.org/a/605022.svg)](https://asciinema.org/a/605022)
+![gocosi usage demo](./resources/demo.gif)
 
 ## Quick Start
 
@@ -65,9 +65,6 @@ cosi-osp
 |-------------------|-----------------------------------------|----------------------------------------------------------------|
 | `-module`         | `example.com/cosi-osp`                  | Override name for your new module.                             |
 | `-dir`            | `cosi-osp`                              | Location/Path, where the module will be created.               |
-| `-image`          | `gcr.io/distroless/static:latest`       | Override the default base Docker image.                        |
-| `-rootless-image` | `docker.io/rockylinux/rockylinux:9-ubi` | Override the default base Docker image for rootless container. |
-| `-rootless`       | `false`                                 | Generate the Dockerfile for rootless container.                |
 
 ## Features
 
@@ -101,6 +98,26 @@ To cater to diverse logging preferences, the gocosi package seamlessly integrate
 - `X_COSI_ENDPOINT_PERMS` (default: `0755`) - it should be set when the COSI endpoint is a UNIX socket file. It determines the file permissions (in octal notation) of the UNIX socket file. If the COSI endpoint is a TCP socket, this setting has no effect.
 - `X_COSI_ENDPOINT_USER`  (default: *The user that starts the process*) - it should be set when the COSI endpoint is a UNIX socket file. It determines the owner (user) of the UNIX socket file. If the COSI endpoint is a TCP socket, this setting has no effect.
 - `X_COSI_ENDPOINT_GROUP` (default: *The group that starts the process*) - it should be set when the COSI endpoint is a UNIX socket file. It determines the group ownership of the UNIX socket file. If the COSI endpoint is a TCP socket, this setting has no effect.
+- **Endpoint OTLP/HTTP** (default: `https://localhost:4317` or `https://localhost:4318`) - target URL to which the exporter is going to send spans or metrics. The endpoint MUST be a valid URL with scheme (http or https) and host, MAY contain a port, SHOULD contain a path and MUST NOT contain other parts (such as query string or fragment). [[spec]][otlp-exporter-spec]
+  - `OTEL_EXPORTER_OTLP_ENDPOINT`
+  - `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`
+  - `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`
+- **Certificate File** - the trusted certificate to use when verifying a server's TLS credentials. Should only be used for a secure connection. [[spec]][otlp-exporter-spec]
+  - `OTEL_EXPORTER_OTLP_CERTIFICATE`
+  - `OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE`
+  - `OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE`
+- **Headers** - key-value pairs to be used as headers associated with gRPC or HTTP requests. [[spec]][otlp-exporter-spec]
+  - `OTEL_EXPORTER_OTLP_HEADERS`
+  - `OTEL_EXPORTER_OTLP_TRACES_HEADERS`
+  - `OTEL_EXPORTER_OTLP_METRICS_HEADERS`
+- **Compression** - compression key for supported compression types. Supported compression: `gzip`. [[spec]][otlp-exporter-spec]
+  - `OTEL_EXPORTER_OTLP_COMPRESSION`
+  - `OTEL_EXPORTER_OTLP_TRACES_COMPRESSION`
+  - `OTEL_EXPORTER_OTLP_METRICS_COMPRESSION`
+- **Timeout** (default: `10s`) - maximum time the OTLP exporter will wait for each batch export. [[spec]][otlp-exporter-spec]
+  - `OTEL_EXPORTER_OTLP_TIMEOUT`
+  - `OTEL_EXPORTER_OTLP_TRACES_TIMEOUT`
+  - `OTEL_EXPORTER_OTLP_METRICS_TIMEOUT`
 
 ## Contributing
 
@@ -109,3 +126,7 @@ You want to contibute? Hop into the [CONTRIBUTING.md](CONTRIBUTING.md) and find 
 ## Prior Art
 
 This project was inspired by [rexray/gocsi](https://github.com/rexray/gocsi) and [dell/gocsi](https://github.com/dell/gocsi).
+
+<!-- Named Links --->
+
+[otlp-exporter-spec]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md
