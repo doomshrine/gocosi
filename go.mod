@@ -7,6 +7,7 @@ require (
 	github.com/doomshrine/testcontext v1.0.0
 	github.com/go-logr/logr v1.2.4
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
+	github.com/hellofresh/health-go/v5 v5.3.0
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.44.0
 	go.opentelemetry.io/otel v1.18.0

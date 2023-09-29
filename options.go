@@ -26,6 +26,7 @@ import (
 	grpclog "github.com/doomshrine/gocosi/grpc/log"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+	"github.com/hellofresh/health-go/v5"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
@@ -248,6 +249,28 @@ func WithGRPCTraceExporter(opt ...otlptracegrpc.Option) Option {
 		}
 
 		d.traceShutdownFunc = shutdown
+
+		return nil
+	}
+}
+
+// WithHealthcheck returns an Option function that sets up a healthcheck service for the driver.
+// It accepts options for configuring the healthcheck service.
+func WithHealthcheck(options ...health.Option) Option {
+	return func(d *Driver) error {
+		h, err := health.New(options...)
+		if err != nil {
+			return fmt.Errorf("unable to create new healthcheck service: %w", err)
+		}
+
+		d.healthz = h
+
+		if d.mux == nil {
+			// This should not occur, but just for my sanity...
+			return ErrNilMux
+		}
+
+		d.mux.Handle(HealthcheckEndpoint, d.healthz.Handler())
 
 		return nil
 	}
