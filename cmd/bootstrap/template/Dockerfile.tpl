@@ -41,11 +41,12 @@ WORKDIR /cosi
 # Set volume mount point for COSI socket.
 VOLUME [ "/var/lib/cosi" ]
 
-# TODO: add metrics and healthceck port;
-# EXPOSE 80
+# Expose the healthcheck port.
+EXPOSE 8080
 
-# TODO: add healthcheck command;
-HEALTHCHECK NONE
+# Define a healthcheck for the container.
+HEALTHCHECK --interval=30s --timeout=15s --retries=3 \
+    CMD [ "/usr/bin/cosi-osp", "--healthcheck" ]
 
 # Set the default environment.
 ENV COSI_ENDPOINT="unix:///var/lib/cosi/cosi.sock"

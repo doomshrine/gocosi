@@ -18,12 +18,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
-	"os/signal"
-	"syscall"
+	"time"
 
 	"github.com/doomshrine/must"
 	"github.com/go-logr/logr"
+	"github.com/hellofresh/health-go/v5"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"google.golang.org/grpc"
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
@@ -44,6 +45,10 @@ type Driver struct {
 	endpoint    *Endpoint
 	grpcOptions []grpc.ServerOption
 
+	server  *http.Server
+	mux     *http.ServeMux
+	healthz *health.Health
+
 	logger        logr.Logger
 	otelCollector string
 }
@@ -53,11 +58,23 @@ type Option func(*Driver) error
 
 // New creates a new instance of the COSI driver.
 func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, res *resource.Resource, opts ...Option) (*Driver, error) {
+	mux := http.NewServeMux()
+
 	p := &Driver{
 		identity:    identity,
 		provisioner: provisioner,
 
 		resource: res,
+
+		mux: mux,
+		server: &http.Server{
+			Addr:              ":8080",
+			Handler:           mux,
+			ReadTimeout:       1 * time.Second,
+			WriteTimeout:      1 * time.Second,
+			IdleTimeout:       30 * time.Second,
+			ReadHeaderTimeout: 2 * time.Second,
+		},
 
 		endpoint: &Endpoint{
 			permissions: 0o755,
@@ -83,9 +100,6 @@ func SetLogger(l logr.Logger) {
 
 // Run starts the COSI driver and serves requests.
 func (d *Driver) Run(ctx context.Context) error {
-	ctx, cancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
-	defer cancel()
-
 	lis, err := d.endpoint.Listener(ctx)
 	if err != nil {
 		return fmt.Errorf("listener creation failed: %w", err)
@@ -97,10 +111,9 @@ func (d *Driver) Run(ctx context.Context) error {
 		return fmt.Errorf("gRPC server creation failed: %w", err)
 	}
 
-	go func() {
-		<-ctx.Done()
-		srv.GracefulStop()
-	}()
+	go d.serveHTTP()
+
+	go shutdown(ctx, srv, d.server)
 
 	log.V(4).Info("starting driver", "address", lis.Addr())
 
@@ -110,6 +123,37 @@ func (d *Driver) Run(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func shutdown(ctx context.Context, g *grpc.Server, h *http.Server) {
+	log.V(8).Info("shutdown watcher started")
+	<-ctx.Done()
+	log.Info("starting shutdown")
+
+	if g != nil {
+		go g.GracefulStop()
+	}
+
+	if h != nil {
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		go func() {
+			err := h.Shutdown(shutdownCtx)
+			if err != nil {
+				log.Error(err, "error during HTTP server shutdown")
+			}
+		}()
+	}
+}
+
+func (d *Driver) serveHTTP() {
+	log.V(8).Info("http server started", "address", d.server.Addr)
+
+	err := d.server.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Error(err, "failed to serve HTTP server", "address", d.server.Addr)
+	}
 }
 
 func (d *Driver) grpcServer() (*grpc.Server, error) {
