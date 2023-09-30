@@ -66,7 +66,7 @@ func TestHealthcheckProbe(t *testing.T) {
 
 			go func() {
 				err := server.ListenAndServe()
-				require.NoError(t, err)
+				require.ErrorIs(t, err, http.ErrServerClosed)
 			}()
 
 			err := HealthcheckFunc(ctx, fmt.Sprintf("http://localhost:%d/healthz", tc.port))
