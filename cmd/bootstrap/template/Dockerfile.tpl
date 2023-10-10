@@ -2,7 +2,7 @@
 # First stage:
 #   - Building the COSI OSP using the default Go image.
 ###############################################################################
-FROM --platform=${BUILDPLATFORM} docker.io/library/golang:1.21.2 AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/golang:1.21.3 AS builder
 
 # Set the working directory.
 WORKDIR /cosi-osp
