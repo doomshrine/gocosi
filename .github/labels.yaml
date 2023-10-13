@@ -2,6 +2,9 @@ area/api:
   name: area/api
   color: '#0052cc'
   description: Indicates an issue on COSI api area.
+area/ci:
+  name: area/ci
+  color: '#0052cc'
 area/code-generation:
   name: area/code-generation
   color: '#0052cc'
@@ -13,6 +16,9 @@ area/dependency:
   name: area/dependency
   color: '#0052cc'
   description: Issues or PRs related to dependency changes.
+area/documentation:
+  name: area/documentation
+  color: '#0052cc'
 area/example:
   name: area/example
   color: '#0052cc'

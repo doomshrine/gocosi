@@ -4,7 +4,7 @@
 [![GitHub](https://img.shields.io/github/license/doomshrine/gocosi)](LICENSE.txt)
 [![Go Report Card](https://goreportcard.com/badge/github.com/doomshrine/gocosi)](https://goreportcard.com/report/github.com/doomshrine/gocosi)
 [![codecov](https://codecov.io/gh/doomshrine/gocosi/branch/main/graph/badge.svg?token=UGGL63A65L)](https://codecov.io/gh/doomshrine/gocosi)
-[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/doomshrine/gocosi/tests.yaml)](https://github.com/shanduur/gocosi/actions/workflows/tests.yaml)
+[![Tests](https://github.com/doomshrine/gocosi/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/doomshrine/gocosi/actions/workflows/tests.yaml)
 [![Static Badge](https://img.shields.io/badge/COSI_Specification-v1alpha1-green)](https://github.com/kubernetes-sigs/container-object-storage-interface-spec/tree/v0.1.0)
 
 A Container Object Storage Interface (COSI) library and other helpful utilities created with Go, that simplify process of writing your own Object Storage Plugin (OSP).
