@@ -19,15 +19,23 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.opentelemetry.io/otel"
 )
 
 type Logger struct {
 	LoggerImpl logr.Logger
 }
 
-// Interface guard.
-var _ logging.Logger = (*Logger)(nil)
+// Interface guards.
+var (
+	_ logging.Logger    = (*Logger)(nil)
+	_ otel.ErrorHandler = (*Logger)(nil)
+)
 
 func (l *Logger) Log(_ context.Context, level logging.Level, msg string, keysAndValues ...any) {
 	l.LoggerImpl.V(int(level)).Info(msg, keysAndValues...)
+}
+
+func (l *Logger) Handle(err error) {
+	l.LoggerImpl.Error(err, "Caught error.")
 }

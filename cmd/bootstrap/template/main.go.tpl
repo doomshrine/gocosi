@@ -47,7 +47,7 @@ func main() {
 	gocosi.SetLogger(log)
 
 	if err := realMain(context.Background()); err != nil {
-		log.Error(err, "critical failure")
+		log.Error(err, "Critical failure.")
 		os.Exit(1)
 	}
 }

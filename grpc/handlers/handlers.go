@@ -19,7 +19,7 @@ import (
 	"context"
 	"runtime/debug"
 
-	"github.com/doomshrine/gocosi/grpc/log"
+	"github.com/doomshrine/gocosi/internal/log"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 )
 
@@ -35,7 +35,7 @@ func PanicRecovery(logger *log.Logger, callbacks ...func(context.Context)) recov
 
 		if logger != nil {
 			logger.Log(ctx, 0,
-				"recovered from panic",
+				"Recovered from panic.",
 				"panic", p,
 				"stack", debug.Stack())
 		}
