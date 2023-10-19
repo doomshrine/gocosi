@@ -23,7 +23,7 @@ import (
 	"os/user"
 
 	grpchandlers "github.com/doomshrine/gocosi/grpc/handlers"
-	grpclog "github.com/doomshrine/gocosi/grpc/log"
+	grpclog "github.com/doomshrine/gocosi/internal/log"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/hellofresh/health-go/v5"
