@@ -22,9 +22,11 @@ import (
 	"net/url"
 	"time"
 
+	ilog "github.com/doomshrine/gocosi/internal/log"
 	"github.com/doomshrine/must"
 	"github.com/go-logr/logr"
 	"github.com/hellofresh/health-go/v5"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"google.golang.org/grpc"
 	cosi "sigs.k8s.io/container-object-storage-interface-spec"
@@ -96,6 +98,9 @@ func New(identity cosi.IdentityServer, provisioner cosi.ProvisionerServer, res *
 // SetLogger is used to set the default global logger for the gocosi library.
 func SetLogger(l logr.Logger) {
 	log = l
+
+	otel.SetLogger(l)
+	otel.SetErrorHandler(&ilog.Logger{LoggerImpl: log})
 }
 
 // Run starts the COSI driver and serves requests.
@@ -115,7 +120,7 @@ func (d *Driver) Run(ctx context.Context) error {
 
 	go shutdown(ctx, srv, d.server)
 
-	log.V(4).Info("starting driver", "address", lis.Addr())
+	log.V(4).Info("Starting driver.", "address", lis.Addr())
 
 	err = srv.Serve(lis)
 	if err != nil {
@@ -126,9 +131,9 @@ func (d *Driver) Run(ctx context.Context) error {
 }
 
 func shutdown(ctx context.Context, g *grpc.Server, h *http.Server) {
-	log.V(8).Info("shutdown watcher started")
+	log.V(8).Info("Shutdown watcher started.")
 	<-ctx.Done()
-	log.Info("starting shutdown")
+	log.Info("Starting shutdown.")
 
 	if g != nil {
 		go g.GracefulStop()
@@ -141,18 +146,18 @@ func shutdown(ctx context.Context, g *grpc.Server, h *http.Server) {
 		go func() {
 			err := h.Shutdown(shutdownCtx)
 			if err != nil {
-				log.Error(err, "error during HTTP server shutdown")
+				log.Error(err, "Error during HTTP server shutdown.")
 			}
 		}()
 	}
 }
 
 func (d *Driver) serveHTTP() {
-	log.V(8).Info("http server started", "address", d.server.Addr)
+	log.V(8).Info("HTTP server started.", "address", d.server.Addr)
 
 	err := d.server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Error(err, "failed to serve HTTP server", "address", d.server.Addr)
+		log.Error(err, "Failed to serve HTTP server.", "address", d.server.Addr)
 	}
 }
 

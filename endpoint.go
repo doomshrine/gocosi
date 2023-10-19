@@ -133,11 +133,11 @@ func (e *Endpoint) getCOSIEndpoint() {
 
 	u, err := url.Parse(env)
 	if err != nil {
-		log.Error(err, "failed to parse COSI Endpoint from environment")
+		log.Error(err, "Failed to parse COSI Endpoint from environment.")
 		return
 	}
 
-	log.V(8).Info("replacing default", EnvCOSIEndpoint, env)
+	log.V(8).Info("Replacing default.", EnvCOSIEndpoint, env)
 
 	e.address = u
 }
@@ -160,11 +160,11 @@ func (e *Endpoint) getCOSIEndpointUser() {
 	}
 
 	if err != nil {
-		log.Error(err, "failed to parse COSI Endpoint Permissions from environment")
+		log.Error(err, "Failed to parse COSI Endpoint Permissions from environment.")
 		return
 	}
 
-	log.V(8).Info("replacing default", EnvCOSIEndpointUser, env)
+	log.V(8).Info("Replacing default.", EnvCOSIEndpointUser, env)
 
 	e.user = newUser
 }
@@ -187,11 +187,11 @@ func (e *Endpoint) getCOSIEndpointGroup() {
 	}
 
 	if err != nil {
-		log.Error(err, "failed to parse COSI Endpoint Permissions from environment")
+		log.Error(err, "Failed to parse COSI Endpoint Permissions from environment.")
 		return
 	}
 
-	log.V(8).Info("replacing default", EnvCOSIEndpointGroup, env)
+	log.V(8).Info("Replacing default.", EnvCOSIEndpointGroup, env)
 
 	e.group = newGroup
 }
@@ -204,11 +204,11 @@ func (e *Endpoint) getCOSIEndpointPermissions() {
 
 	perms, err := strconv.ParseInt(env, 0, 0)
 	if err != nil {
-		log.Error(err, "failed to parse COSI Endpoint Permissions from environment")
+		log.Error(err, "Failed to parse COSI Endpoint Permissions from environment.")
 		return
 	}
 
-	log.V(8).Info("replacing default", EnvCOSIEndpointPerms, env)
+	log.V(8).Info("Replacing default.", EnvCOSIEndpointPerms, env)
 
 	e.permissions = os.FileMode(perms)
 }

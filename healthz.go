@@ -37,7 +37,7 @@ func HealthcheckFunc(ctx context.Context, addr string) error {
 		return fmt.Errorf("unable to decode healthcheck response: %w", err)
 	}
 
-	log.Info("healthcheck finished",
+	log.Info("Healthcheck finished.",
 		"status", c.Status,
 		"system", c.System,
 		"failures", c.Failures,
