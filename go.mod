@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/doomshrine/must v1.0.0
 	github.com/doomshrine/testcontext v1.0.0
-	github.com/go-logr/logr v1.2.4
+	github.com/go-logr/logr v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/hellofresh/health-go/v5 v5.5.0
 	github.com/stretchr/testify v1.8.4
