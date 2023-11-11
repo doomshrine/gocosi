@@ -105,8 +105,8 @@ func WithDefaultGRPCOptions() Option {
 		grpclogger := &grpclog.Logger{LoggerImpl: log}
 
 		d.grpcOptions = []grpc.ServerOption{
+			grpc.StatsHandler(otelgrpc.NewServerHandler()),
 			grpc.ChainUnaryInterceptor(
-				otelgrpc.UnaryServerInterceptor(),
 				logging.UnaryServerInterceptor(grpclogger),
 				recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpchandlers.PanicRecovery(grpclogger,
 					func(ctx context.Context) { PanicsTotal.Add(ctx, 1) }))),
